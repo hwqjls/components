@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <p class="J_nav">
+    <a href="javascript:;" data-field="all">全部课程</a>
+    <a href="javascript:;" data-field="free">免费课程</a>
+    <a href="javascript:;" data-field="pay">VIP课程</a>
+  </p>
+
+  <ul class="J_list"></ul>
+
+  <div style="display: none" id="J_defaultData">
+    [{"id": "1","course":"前端开发之企业级深度JavaScript特训课【JS++前端】","classes":"19","teacher":"小野","img":"ecmascript.jpg","is_free":"1","datetime":"1540454477","price":"0"},
+    {"id": "2","course":"WEB前端工程师就业班之深度JS DOM+讲师辅导-第3期【JS++前端】","classes":"22","teacher":"小野","img":"dom.jpg","is_free":"0","datetime":"1540454477","price":"699"},
+    {"id": "3","course":"前端开发之企业级深度HTML特训课【JS++前端】","classes":"3","teacher":"小野","img":"html.jpg","is_free":"1","datetime":"1540454477","price":"0"},
+    {"id": "4","course":"前端开发之企业级深度CSS特训课【JS++前端】","classes":"5","teacher":"小野","img":"css.jpg","is_free":"1","datetime":"1540454477","price":"0"},
+    {"id": "5","course":"前端就业班VueJS+去哪儿网+源码课+讲师辅导-第3期【JS++前端】","classes":"50","teacher":"哈默","img":"vuejs.jpg","is_free":"0","datetime":"1540454477","price":"1280"},
+    {"id": "6","course":"前端就业班ReactJS+新闻头条实战+讲师辅导-第3期【JS++前端】","classes":"21","teacher":"托尼","img":"reactjs.jpg","is_free":"0","datetime":"1540454477","price":"2180"},
+    {"id": "7","course":"WEB前端开发工程师就业班-直播/录播+就业辅导-第3期【JS++前端】","classes":"700","teacher":"JS++名师团","img":"jiuyeban.jpg","is_free":"0","datetime":"1540454477","price":"4980"}]
+  </div>
+
+  <script type="text/html" id="J_tpl">
+    <li>{{course}}</li><hr />
+  </script>
+  <script type="text/javascript" src="../../../myUtils/utils.js"></script>
+  <script type="text/javascript">
+    ; (function () {
+      var data = JSON.parse(document.getElementById('J_defaultData').innerHTML),
+        oList = document.getElementsByClassName('J_list')[0],
+        oTpl = document.getElementById('J_tpl').innerHTML,
+        oNav = document.getElementsByClassName('J_nav')[0];
+
+      var init = function () {
+        bindEvent();
+      }
+
+      function bindEvent() {
+        renderList(data);
+        addEvent(oNav, 'click', navClick);
+      }
+
+      function navClick(e) {
+        var e = e || window.event,
+          tar = e.target || e.srcElement,
+          tagName = tar.tagName.toLowerCase(),
+          field = tar.getAttribute('data-field');
+
+        if (tagName === 'a') {
+          renderList(dataField(data, field));
+        }
+      }
+
+      function renderList(data) {
+        var list = '';
+        data.myForEach(function (elem, index, arr) {
+          list += setTplToHTML(oTpl, regTpl, elem);
+        });
+
+        oList.innerHTML = list;
+      }
+
+      function dataField(data, field) {
+        var arr = data.myFilter(function (elem, index, arr) {
+          switch (field) {
+            case 'all':
+              return true;
+              break;
+            case 'free':
+              return elem.is_free === '1';
+              break;
+            case 'pay':
+              return elem.is_free === '0';
+              break;
+              return true;
+          }
+        });
+        return arr;
+      }
+
+      init();
+    })();
+
+  </script>
+</body>
+
+</html>
