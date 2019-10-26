@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+
+<body>
+  <section class="comment-edit-bd J_commentEditBoard">
+    <div class="mask">
+      <div class="comment-wrap">
+        <h3 class="hd">课程评价 - <strong>前端开发之JavaScript深度指南【JS++前端】</strong></h3>
+        <a href="javascript:;" class="fa fa-times J_closeBtn"></a>
+        <p class="tt">您觉得课程怎么样</p>
+        <div class="comment-star J_stars">
+          <i class="fa fa-star J_hoverStar active" data-count="1" data-title="差评！课程太差了，我要吐槽！"></i>
+          <i class="fa fa-star J_hoverStar active" data-count="2" data-title="勉强中评！课程不满意"></i>
+          <i class="fa fa-star J_hoverStar active" data-count="3" data-title="中评！课程一般"></i>
+          <i class="fa fa-star J_hoverStar active" data-count="4" data-title="好评！课程还不错，继续保持！"></i>
+          <i class="fa fa-star J_hoverStar active" data-count="5" data-title="五星好评！课程非常棒，点赞！"></i>
+          <span class="star-label J_starTip">五星好评！</span>
+        </div>
+        <div class="edit-txt-bd">
+          <textarea class="edit-txt J_editTxt" placeholder="请尽可能详尽描述您的学习经历，例如学习成果、老师讲课风格、课程内容等"
+            maxlength="1000"></textarea>
+          <p class="txt-tip">
+            <span class="txt-count J_txtCount">0</span>/1000
+          </p>
+        </div>
+        <p class="comment-desc">不可少于15字。评价多于100字将有机会获得200积分奖励哦~</p>
+        <button type="button" class="comment-btn submit J_submitBtn disabled" disabled="disabled">提交评论</button>
+      </div>
+    </div>
+  </section>
+  <section class="comment-bd">
+    <div class="hd">
+      <button type="button" class="comment-btn J_openBtn">立即评论</button>
+    </div>
+    <div class="score-bd">
+      <div class="comment-statistics">
+        <span class="statistics-num J_statisticsNum">-</span>
+        <p>好评度</p>
+      </div>
+      <div class="radio-tabs J_radioTabs">
+        <label class="tab-radio cur" data-id="0">
+          <i class="radio-icon"></i>
+          <span class="radio-txt">全部好评(<span class="radio-count">0</span>)</span>
+        </label>
+        <label class="tab-radio" data-id="1">
+          <i class="radio-icon"></i>
+          <span class="radio-txt">好评(<span class="radio-count">0</span>)</span>
+        </label>
+        <label class="tab-radio" data-id="2">
+          <i class="radio-icon"></i>
+          <span class="radio-txt">中评(<span class="radio-count">0</span>)</span>
+        </label>
+        <label class="tab-radio" data-id="3">
+          <i class="radio-icon"></i>
+          <span class="radio-txt">差评(<span class="radio-count">0</span>)</span>
+        </label>
+      </div>
+    </div>
+    <div class="comment-wrap J_commentList">
+      <div class="comment-item"></div>
+    </div>
+    <div class="comment-loading J_loading">
+      <i class="fa fa-spinner fa-spin"></i>
+    </div>
+    <div class="page-btn-wrap">
+      <div class="page-btn-box J_btnBox"></div>
+    </div>
+  </section>
+
+  <script type="text/html" id="J_itemTpl">
+    <div class="comment-item">
+      <div class="item-left">
+        <img src="img/{{avatar}}" class="user-avatar" width="40" height="40" alt="" />
+        <p class="user-name">{{nickname}}</p>
+      </div>
+      <div class="item-right">
+        <div class="star-list">
+          <i class="fa fa-star {{isActive}}"></i>
+          <i class="fa fa-star {{isActive}}"></i>
+          <i class="fa fa-star {{isActive}}"></i>
+          <i class="fa fa-star {{isActive}}"></i>
+          <i class="fa fa-star {{isActive}}"></i>
+        </div>
+        <div class="comment-content">{{comment}}</div>
+        <div class="comment-uptime">{{uptime}}</div>
+      </div>
+    </div>
+  </script>
+  <script type="text/html" id="J_addCommentTpl">
+    <div class="add-comment-item">
+      <div class="comment-content">追加评论：<span>{{comment}}</span></div>
+      <div class="comment-uptime">{{uptime}}</div>
+    </div>
+  </script>
+  <script type="text/html" id="J_warningTip">
+    <div class="comment-msg">
+      <i class="fa fa-warning"></i>
+      <p class="msg-txt J_msgTxt">{{text}}</p>
+    </div>
+  </script>
+  <script src="../../myUtils/utils.js"></script>
+  <script src="js/modules/index/comment_module.js"></script>
+  <script src="js/index.js"></script>
+
+  <script>
+    var btnGroup = '',
+      curPage = 1,
+      pages = 20,
+      oBtnBox = document.getElementsByClassName('J_btnBox')[0];
+
+    render();
+
+    function pageBtnTpl(type, num) {
+      switch (type) {
+        case 'btn':
+          if (curPage == num) {
+            return '<span class="page-btn page-btn-cur">' + num + '</span>';
+          } else {
+            return '<a href="javascript:;" class="page-btn" data-page="' + num + '" data-field="btn">' + num + '</a>';
+          }
+          break;
+        case 'prev':
+          if (curPage == 1) {
+            return '<span class="dir-btn prev-btn disabled"><i class="fa fa-angle-left"></i></span>';
+          } else {
+            return '<a href="javascript:;" class="dir-btn prev-btn" data-field="prev"><i class="fa fa-angle-left" data-field="prev"></i></a>';
+          }
+          break;
+        case 'next':
+          if (curPage == pages) {
+            return '<span class="dir-btn next-btn disabled"><i class="fa fa-angle-right"></i></span>';
+          } else {
+            return '<a href="javascript:;" class="dir-btn next-btn" data-field="next"><i class="fa fa-angle-right" data-field="next"></i></a>';
+          }
+          break;
+        case 'points':
+          return '<span class="points">...</span>';
+          break;
+      }
+    }
+
+    function makeBtnGroup(start, end) {
+      for (var i = start; i <= end; i++) {
+        btnGroup += pageBtnTpl('btn', i, curPage);
+      }
+    }
+
+    function render() {
+      btnGroup += pageBtnTpl('prev', 20, curPage);
+      if (pages > 7) {
+        if (curPage < 3) {
+          makeBtnGroup(1, 3, curPage);
+          btnGroup += pageBtnTpl('points');
+          makeBtnGroup(pages - 1, pages, curPage);
+        } else if (curPage >= 3 && curPage < 5) {
+          makeBtnGroup(1, curPage + 1, curPage);
+          btnGroup += pageBtnTpl('points');
+          makeBtnGroup(pages - 1, pages, curPage);
+        } else if (curPage >= 5 && curPage < pages - 3) {
+          makeBtnGroup(1, 2, curPage);
+          btnGroup += pageBtnTpl('points');
+          makeBtnGroup(curPage - 1, curPage + 1, curPage);
+          btnGroup += pageBtnTpl('points');
+          makeBtnGroup(pages - 1, pages, curPage);
+        } else if (curPage >= pages - 4 && curPage <= pages - 1) {
+          makeBtnGroup(1, 2, curPage);
+          btnGroup += pageBtnTpl('points');
+          makeBtnGroup(curPage - 1, pages, curPage);
+        } else if (curPage == pages) {
+          makeBtnGroup(1, 2, curPage);
+          btnGroup += pageBtnTpl('points');
+          makeBtnGroup(curPage - 2, pages, curPage);
+        }
+      } else {
+        makeBtnGroup(1, pages, curPage);
+      }
+      btnGroup += pageBtnTpl('next', pages, curPage);
+
+      oBtnBox.innerHTML = btnGroup;
+    }
+  </script>
+
+</body>
+
+</html>
